@@ -4259,17 +4259,20 @@ body:not(.website-page):not(.online-solutions-page):not(.emenu-page) .zv-client-
 .site-footer .footer-social-link:first-child svg{fill:none;stroke:currentColor;stroke-width:2}
 @media(max-width:560px){.site-footer .footer-social{gap:10px}.site-footer .footer-social-link{width:36px;height:36px}}
 
-/* Active header navigation state shared by the main, online-solutions and eMenu pages. */
-.site-header .nav-menu > a.active,
-.site-header .nav-menu > a[aria-current="location"],
-.site-header .brand.active,
-.site-header .brand[aria-current="location"] {
+
+/* Header active state: clear underline, no filled background. */
+.site-header .nav-menu > a.active:not(.btn),
+.site-header .nav-menu > a[aria-current="location"]:not(.btn),
+.site-header .nav-menu > a[aria-current="page"]:not(.btn) {
   color: var(--teal) !important;
   font-weight: 800;
+  background: transparent !important;
+  box-shadow: none !important;
   position: relative;
 }
-.site-header .nav-menu > a.active::after,
-.site-header .nav-menu > a[aria-current="location"]::after {
+.site-header .nav-menu > a.active:not(.btn)::after,
+.site-header .nav-menu > a[aria-current="location"]:not(.btn)::after,
+.site-header .nav-menu > a[aria-current="page"]:not(.btn)::after {
   content: "";
   position: absolute;
   left: 0;
@@ -4279,26 +4282,21 @@ body:not(.website-page):not(.online-solutions-page):not(.emenu-page) .zv-client-
   border-radius: 999px;
   background: var(--teal);
 }
-.site-header .nav-menu > a.active:hover,
-.site-header .nav-menu > a[aria-current="location"]:hover { color: var(--blue) !important; }
-html { scroll-padding-top: 92px; }
-[id] { scroll-margin-top: 92px; }
-@media (max-width: 1120px) {
-  .site-header .nav-menu > a.active::after,
-  .site-header .nav-menu > a[aria-current="location"]::after { bottom: 3px; left: 12px; right: auto; width: 28px; }
-}
-
-
-/* Header active state: use a bottom underline only, without a filled menu-item background. */
-.site-header .nav-menu > a.active:not(.btn),
-.site-header .nav-menu > a[aria-current="location"]:not(.btn),
-.site-header .nav-menu > a[aria-current="page"]:not(.btn),
 .site-header .nav-dropdown-menu a.active,
 .site-header .nav-dropdown-menu a[aria-current="page"] {
+  color: var(--teal) !important;
+  font-weight: 800;
   background: transparent !important;
 }
-.site-header .nav-menu > a.active:not(.btn),
-.site-header .nav-menu > a[aria-current="location"]:not(.btn),
-.site-header .nav-menu > a[aria-current="page"]:not(.btn) {
-  box-shadow: none !important;
+html { scroll-padding-top: 104px; }
+[id] { scroll-margin-top: 104px; }
+@media (max-width: 1120px) {
+  .site-header .nav-menu > a.active:not(.btn)::after,
+  .site-header .nav-menu > a[aria-current="location"]:not(.btn)::after,
+  .site-header .nav-menu > a[aria-current="page"]:not(.btn)::after {
+    left: 12px;
+    right: auto;
+    bottom: 3px;
+    width: 28px;
+  }
 }
