@@ -162,69 +162,93 @@
   }
 })();
 
-/* Shared section navigation: click-to-scroll and active-section highlighting. */
+
+/* Shared header section navigation: smooth scrolling and live active-state tracking. */
 (() => {
   const header = document.querySelector('.site-header');
-  const navMenu = document.querySelector('[data-nav-menu]');
-  if (!header || !navMenu) return;
+  const nav = document.querySelector('[data-nav-menu]');
+  if (!header || !nav) return;
 
-  const menuLinks = Array.from(navMenu.querySelectorAll('a[href^="#"]'))
-    .filter((link) => {
-      const hash = link.getAttribute('href');
-      return hash && hash.length > 1 && document.getElementById(decodeURIComponent(hash.slice(1)));
-    });
-  const brandLink = document.querySelector('.site-header .brand[href^="#"]');
-  const links = brandLink && document.getElementById(decodeURIComponent(brandLink.getAttribute('href').slice(1)))
-    ? [brandLink, ...menuLinks]
-    : menuLinks;
-  if (!links.length) return;
+  const allLinks = Array.from(nav.querySelectorAll('a[href]'));
+  const sectionLinks = allLinks.filter((link) => {
+    const href = link.getAttribute('href') || '';
+    if (!href.startsWith('#') || href.length < 2) return false;
+    try { return Boolean(document.getElementById(decodeURIComponent(href.slice(1)))); }
+    catch (_) { return false; }
+  });
 
-  const targets = links.map((link) => ({
-    link,
-    section: document.getElementById(decodeURIComponent(link.getAttribute('href').slice(1)))
-  })).filter((item) => item.section)
-    .sort((a, b) => a.section.compareDocumentPosition(b.section) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1);
-  if (!targets.length) return;
-
-  const setActive = (activeLink) => {
-    links.forEach((link) => {
-      const active = link === activeLink;
-      link.classList.toggle('active', active);
-      if (active) link.setAttribute('aria-current', 'location');
-      else link.removeAttribute('aria-current');
+  const setActive = (active) => {
+    allLinks.forEach((link) => {
+      const selected = link === active;
+      link.classList.toggle('active', selected);
+      if (selected) link.setAttribute('aria-current', 'location');
+      else if (link.getAttribute('aria-current') === 'location') link.removeAttribute('aria-current');
     });
   };
 
+  // Mark the current page link (including links inside the Services dropdown).
+  const currentPath = window.location.pathname.replace(/index\.html$/i, '').replace(/\/$/, '') || '/';
+  allLinks.forEach((link) => {
+    const href = link.getAttribute('href') || '';
+    if (!href || href.startsWith('#') || /^(https?:|mailto:|tel:|javascript:)/i.test(href)) return;
+    try {
+      const targetUrl = new URL(href, window.location.href);
+      const targetPath = targetUrl.pathname.replace(/index\.html$/i, '').replace(/\/$/, '') || '/';
+      if (targetUrl.origin === window.location.origin && targetPath === currentPath) {
+        link.classList.add('active');
+        link.setAttribute('aria-current', 'page');
+      }
+    } catch (_) {}
+  });
+
+  const targets = sectionLinks.map((link) => ({
+    link,
+    section: document.getElementById(decodeURIComponent(link.getAttribute('href').slice(1)))
+  })).sort((a, b) => {
+    if (a.section === b.section) return 0;
+    return a.section.compareDocumentPosition(b.section) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
+  });
+
   const updateActive = () => {
-    const threshold = header.getBoundingClientRect().height + 28;
+    if (!targets.length) return;
+    const threshold = header.getBoundingClientRect().height + 36;
     let current = null;
     targets.forEach(({ link, section }) => {
       if (section.getBoundingClientRect().top <= threshold) current = link;
     });
     if (current) setActive(current);
-    else if (window.scrollY < 24 && brandLink && targets.some((item) => item.link === brandLink)) setActive(brandLink);
-    else setActive(null);
+    else if (window.scrollY < 24) {
+      const home = sectionLinks.find((link) => {
+        const id = decodeURIComponent(link.getAttribute('href').slice(1));
+        return id === 'home' || id === 'top';
+      });
+      setActive(home || null);
+    } else setActive(null);
   };
 
-  links.forEach((link) => {
+  sectionLinks.forEach((link) => {
     link.addEventListener('click', (event) => {
-      const target = document.getElementById(decodeURIComponent(link.getAttribute('href').slice(1)));
+      const id = decodeURIComponent(link.getAttribute('href').slice(1));
+      const target = document.getElementById(id);
       if (!target) return;
       event.preventDefault();
       setActive(link);
-      const top = window.scrollY + target.getBoundingClientRect().top - header.getBoundingClientRect().height;
-      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
-      if (window.location.hash !== link.getAttribute('href')) history.replaceState(null, '', link.getAttribute('href'));
+      const top = window.scrollY + target.getBoundingClientRect().top - header.getBoundingClientRect().height - 12;
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: Math.max(0, top), behavior: reduceMotion ? 'auto' : 'smooth' });
+      if (window.location.hash !== link.getAttribute('href')) {
+        history.replaceState(null, '', link.getAttribute('href'));
+      }
     });
   });
 
-  let ticking = false;
+  let scheduled = false;
   const onScroll = () => {
-    if (ticking) return;
-    ticking = true;
+    if (scheduled) return;
+    scheduled = true;
     window.requestAnimationFrame(() => {
       updateActive();
-      ticking = false;
+      scheduled = false;
     });
   };
   window.addEventListener('scroll', onScroll, { passive: true });
