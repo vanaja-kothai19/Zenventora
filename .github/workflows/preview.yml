@@ -1,3 +1,4 @@
+# Preview deployment workflow; production main branch remains untouched.
 name: Deploy Preview
 
 on:
