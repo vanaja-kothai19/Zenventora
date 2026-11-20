@@ -4258,3 +4258,33 @@ body:not(.website-page):not(.online-solutions-page):not(.emenu-page) .zv-client-
 .site-footer .footer-social-link svg{width:19px;height:19px;fill:currentColor;stroke:currentColor;stroke-width:0;display:block}
 .site-footer .footer-social-link:first-child svg{fill:none;stroke:currentColor;stroke-width:2}
 @media(max-width:560px){.site-footer .footer-social{gap:10px}.site-footer .footer-social-link{width:36px;height:36px}}
+
+
+/* Active header navigation state shared by the main, online-solutions and eMenu pages. */
+.site-header .nav-menu > a.active,
+.site-header .nav-menu > a[aria-current="location"],
+.site-header .brand.active,
+.site-header .brand[aria-current="location"] {
+  color: var(--teal) !important;
+  font-weight: 800;
+  position: relative;
+}
+.site-header .nav-menu > a.active::after,
+.site-header .nav-menu > a[aria-current="location"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -7px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--teal);
+}
+.site-header .nav-menu > a.active:hover,
+.site-header .nav-menu > a[aria-current="location"]:hover { color: var(--blue) !important; }
+html { scroll-padding-top: 92px; }
+[id] { scroll-margin-top: 92px; }
+@media (max-width: 1120px) {
+  .site-header .nav-menu > a.active::after,
+  .site-header .nav-menu > a[aria-current="location"]::after { bottom: 3px; left: 12px; right: auto; width: 28px; }
+}
