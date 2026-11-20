@@ -4288,3 +4288,18 @@ html { scroll-padding-top: 92px; }
   .site-header .nav-menu > a.active::after,
   .site-header .nav-menu > a[aria-current="location"]::after { bottom: 3px; left: 12px; right: auto; width: 28px; }
 }
+
+
+/* Header active state: use a bottom underline only, without a filled menu-item background. */
+.site-header .nav-menu > a.active:not(.btn),
+.site-header .nav-menu > a[aria-current="location"]:not(.btn),
+.site-header .nav-menu > a[aria-current="page"]:not(.btn),
+.site-header .nav-dropdown-menu a.active,
+.site-header .nav-dropdown-menu a[aria-current="page"] {
+  background: transparent !important;
+}
+.site-header .nav-menu > a.active:not(.btn),
+.site-header .nav-menu > a[aria-current="location"]:not(.btn),
+.site-header .nav-menu > a[aria-current="page"]:not(.btn) {
+  box-shadow: none !important;
+}
