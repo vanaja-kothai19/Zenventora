@@ -183,7 +183,8 @@
   const targets = links.map((link) => ({
     link,
     section: document.getElementById(decodeURIComponent(link.getAttribute('href').slice(1)))
-  })).filter((item) => item.section);
+  })).filter((item) => item.section)
+    .sort((a, b) => a.section.compareDocumentPosition(b.section) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1);
   if (!targets.length) return;
 
   const setActive = (activeLink) => {
