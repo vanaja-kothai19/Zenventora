@@ -4305,17 +4305,16 @@ html { scroll-padding-top: 92px; }
 }
 
 
-/* Legal pages: Services dropdown opens on hover and closes as soon as pointer leaves.
-   A native <details> click must not leave the menu stuck open on these pages. */
+/* Legal pages: match the standard Services hover behavior.
+   Mouse click/focus must not keep the dropdown open after pointer leaves. */
 @media (hover: hover) and (min-width: 961px) {
-  .legal-nav .nav-dropdown[open]:not(:hover):not(:focus-within) > .nav-dropdown-menu {
+  .legal-nav .nav-dropdown[open]:not(:hover) > .nav-dropdown-menu {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
     pointer-events: none !important;
   }
-  .legal-nav .nav-dropdown:hover > .nav-dropdown-menu,
-  .legal-nav .nav-dropdown:focus-within > .nav-dropdown-menu {
+  .legal-nav .nav-dropdown:hover > .nav-dropdown-menu {
     display: grid !important;
     visibility: visible !important;
     opacity: 1 !important;
